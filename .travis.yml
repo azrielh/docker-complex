@@ -1,0 +1,25 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  # need to add the dev dockerfile as we need access to the test files
+  - docker build -t react-test -f ./client/dev.Dockerfile ./client
+
+script:
+  # any issues other than 0 then will exit
+  - docker run react-test npm test -- --coverage
+
+# build production versions of all the projects
+after_success:
+  - docker build -t azrielh/complex-client ./client
+  - docker build -t azrielh/complex-nginx ./nginx
+  - docker build -t azrielh/complex-server ./server
+  - docker build -t azrielh/complex-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #  Take the images and push to docker hub
+  - docker push azrielh/complex-client
+  - docker push azrielh/complex-nginx
+  - docker push azrielh/complex-server
+  - docker push azrielh/complex-worker
