@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: client
-          image: azrielh/multi-client
+          image: azrielh/complex-client
           ports:
             - containerPort: 3000
